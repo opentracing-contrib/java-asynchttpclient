@@ -25,9 +25,13 @@
         </license>
     </licenses>
 
-   <!-- TODO: Add SCM section when merged to primary repo -->
+    <scm>
+        <url>https://github.com/opentracing-contrib/java-asynchttpclient</url>
+        <connection>scm:git:git://github.com/opentracing-contrib/java-asynchttpclient.git</connection>
+        <developerConnection>scm:git:git@github.com/opentracing-contrib/java-asynchttpclient.git</developerConnection>
+    </scm>
 
-   <dependencies>
+    <dependencies>
         <dependency>
             <groupId>org.asynchttpclient</groupId>
             <artifactId>async-http-client</artifactId>
