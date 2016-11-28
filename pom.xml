@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.opentracing.contrib.asynchttpclient</groupId>
+    <groupId>io.opentracing.contrib</groupId>
     <artifactId>asynchttpclient-opentracing</artifactId>
     <version>0.1.0-SNAPSHOT</version>
    
@@ -25,6 +25,14 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <id>joeblubaugh</id>
+            <name>Joe Blubaugh</name>
+            <email>joe@lightstep.com</email>
+        </developer>
+    </developers>
+
     <scm>
         <url>https://github.com/opentracing-contrib/java-asynchttpclient</url>
         <connection>scm:git:git://github.com/opentracing-contrib/java-asynchttpclient.git</connection>
@@ -43,6 +51,13 @@
             <version>${opentracing.version}</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -83,7 +98,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -98,7 +112,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -110,4 +123,10 @@
             </plugin>
         </plugins>
     </build>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/opentracing-contrib/java-asynchttpclient/issues</url>
+    </issueManagement>
+
 </project>
