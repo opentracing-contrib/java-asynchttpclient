@@ -1,5 +1,5 @@
 # java-asynchttpclient
-
+[![Build Status](https://travis-ci.org/opentracing-contrib/java-asynchttpclient.svg?branch=master)](https://travis-ci.org/opentracing-contrib/java-asynchttpclient)
 OpenTracing Instrumentation for org.asynchttpclient
 
 ## Requirements
