@@ -158,7 +158,8 @@ public class TracingAsyncHttpClient extends DefaultAsyncHttpClient {
      * };
      *
      * ...
-     * }</pre>
+     * }
+     *}</pre>
      */
     @SuppressWarnings("WeakerAccess")
     public interface ActiveSpanSource {
