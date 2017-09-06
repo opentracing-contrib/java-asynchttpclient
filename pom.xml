@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.opentracing.contrib</groupId>
     <artifactId>asynchttpclient-opentracing</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
    
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Support for integrating OpenTracing with org.asynchttpclient</description>
@@ -13,7 +13,7 @@
 
     <properties>
         <asynchttpclient.version>[2.0.0,)</asynchttpclient.version>
-        <opentracing.version>[0.16.0,)</opentracing.version>
+        <opentracing.version>[0.30.0,)</opentracing.version>
     </properties>
 
     <packaging>jar</packaging>
