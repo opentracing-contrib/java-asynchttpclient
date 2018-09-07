@@ -30,22 +30,22 @@ dependencies {
 ## Usage
 
 - Intialize an OpenTracing tracer
-- Create an `ActiveSpanSource` to return a parent span when a span is created for a request.
+- Create an `ActiveSpanContextSource` to return a parent spancontext when a span is created for a request.
 - Create a `SpanDecorator` or use the `DEFAULT` implementation.
 - Create a `TracingAsyncHttpClient` and use it to make requests.
 
 ```java
 class MyClass {
-    final ThreadLocal<Span> activeSpan;
+    final ThreadLocal<SpanContext> activeSpanContext;
 
     public MyClass() {
-        activeSpan = new ThreadLocal<Span>() {};
+        activeSpan = new ThreadLocal<SpanContext>();
 
         // Source that can extract span data and keep it in a thread-local:
-        TracingAsyncHttpClient.ActiveSpanSource activeSpanSource = 
-            new TracingAsyncHttpClient.ActiveSpanSource() {
-                public Span getActiveSpan() {
-                    return activeSpan.get();
+        TracingAsyncHttpClient.ActiveSpanContextSource spanContextSource = 
+            new TracingAsyncHttpClient.ActiveSpanContextSource() {
+                public Span getActiveSpanContext() {
+                    return activeSpanContext.get();
                 }
             };
 
@@ -53,7 +53,7 @@ class MyClass {
 
         AsyncHttpClient client = new TracingAsyncHttpClient(
                     tracer,
-                    activeSpanSource,
+                    spanContextSource,
                     SpanDecorator.DEFAULT
                 );
     }

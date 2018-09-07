@@ -1,6 +1,7 @@
 package io.opentracing.contrib.asynchttpclient;
 
 import io.opentracing.Span;
+import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import io.opentracing.propagation.TextMap;
@@ -19,20 +20,20 @@ import java.util.concurrent.CompletableFuture;
 public class TracingAsyncHttpClient extends DefaultAsyncHttpClient {
 
     private Tracer tracer;
-    private ActiveSpanSource activeSpanSource;
+    private ActiveSpanContextSource activeSpanContextSource;
     private SpanDecorator spanDecorator;
     private List<CompletableFuture<?>> traceFutures;
 
     @SuppressWarnings({"WeakerAccess", "unused"})
-    public TracingAsyncHttpClient(Tracer tracer, ActiveSpanSource activeSpanSource, SpanDecorator spanDecorator) {
-        this(tracer, activeSpanSource, spanDecorator, new DefaultAsyncHttpClientConfig.Builder().build());
+    public TracingAsyncHttpClient(Tracer tracer, ActiveSpanContextSource activeSpanContextSource, SpanDecorator spanDecorator) {
+        this(tracer, activeSpanContextSource, spanDecorator, new DefaultAsyncHttpClientConfig.Builder().build());
     }
 
     @SuppressWarnings("WeakerAccess")
-    public TracingAsyncHttpClient(Tracer tracer, ActiveSpanSource activeSpanSource, SpanDecorator spanDecorator, AsyncHttpClientConfig config) {
+    public TracingAsyncHttpClient(Tracer tracer, ActiveSpanContextSource activeSpanContextSource, SpanDecorator spanDecorator, AsyncHttpClientConfig config) {
         super(config);
         this.tracer = tracer;
-        this.activeSpanSource = activeSpanSource;
+        this.activeSpanContextSource = activeSpanContextSource;
         this.spanDecorator = spanDecorator;
         // Retain a reference to futures so they aren't GC'ed before completion.
         this.traceFutures = new ArrayList<>();
@@ -65,14 +66,9 @@ public class TracingAsyncHttpClient extends DefaultAsyncHttpClient {
     private <T> ListenableFuture<T> tracedFuture(RequestBuilder requestBuilder, ListenableFutureGenerator<T> generator) {
         Tracer.SpanBuilder builder = tracer.buildSpan(spanDecorator.getOperationName(requestBuilder));
 
-        Span parent = activeSpanSource.getActiveSpan();
-        if (parent != null) {
-            System.out.println("ACTIVE_SPAN_LIVE"); // TODO: REMOVE
-            builder.asChildOf(parent);
-        } else { // TODO: REMOVE
-            System.out.println("ACTIVE_SPAN_NULL");
-        }
 
+        SpanContext parent = activeSpanContextSource.getActiveSpanContext();
+        builder.asChildOf(parent);
         spanDecorator.decorateSpan(builder, requestBuilder);
 
         final Span span = builder.start();
@@ -140,20 +136,20 @@ public class TracingAsyncHttpClient extends DefaultAsyncHttpClient {
     }
 
     /**
-     * An abstract API that allows the TracingAsyncHttpClient to customize how parent Spans are discovered.
+     * An abstract API that allows the TracingAsyncHttpClient to customize how parent SpanContexts are discovered.
      *
-     * For instance, if Spans are stored in a thread-local variable, an ActiveSpanSource could access them like so:
+     * For instance, if SpansContext are stored in a thread-local variable, an ActiveSpanContextSource could access them like so:
      * <p>Example usage:
      * <pre>{@code
      * public class SomeClass {
-     *     // Thread local variable containing each thread's ID
-     *     private static final ThreadLocal<Span> activeSpan =
-     *         new ThreadLocal<Span>() {};
+     *     // Thread local variable containing each thread's activeSpanContext
+     *     private static final ThreadLocal<SpanContext> activeSpanContext =
+     *         new ThreadLocal<SpanContext>();
      *
      * ... elsewhere ...
-     * ActiveSpanSource spanSource = new ActiveSpanSource() {
-     *     public Span activeSpan() {
-     *         return activeSpan.get();
+     * ActiveSpanContextSource spanContextSource = new ActiveSpanContextSource() {
+     *     public Span activeSpanContext() {
+     *         return activeSpanContext.get();
      *     }
      * };
      *
@@ -161,14 +157,13 @@ public class TracingAsyncHttpClient extends DefaultAsyncHttpClient {
      * }
      *}</pre>
      */
-    @SuppressWarnings("WeakerAccess")
-    public interface ActiveSpanSource {
+    public interface ActiveSpanContextSource{
         /**
-         * Get the currently active Span to serve as a parent span for new spans.
+         * Get the currently active SpanContext to serve as a parent spancontext for new spans.
          *
-         * @return the currently active span, or null.
+         * @return the currently active spancontext, or null.
          */
-        Span getActiveSpan();
+        SpanContext getActiveSpanContext();
     }
 
     private interface ListenableFutureGenerator<T> {
