@@ -20,14 +20,24 @@
                           http://maven.apache.org/xsd/settings-1.0.0.xsd">
   <servers>
     <server>
-      <id>ossrh</id>
-      <username>${env.OSSRH_USERNAME}</username>
-      <password>${env.OSSRH_PASSWORD}</password>
+      <id>sonatype</id>
+      <username>${env.SONATYPE_USER}</username>
+      <password>${env.SONATYPE_PASSWORD}</password>
     </server>
     <server>
-      <id>gpg.passphrase</id>
-      <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+      <id>bintray</id>
+      <username>${env.BINTRAY_USER}</username>
+      <password>${env.BINTRAY_KEY}</password>
+    </server>
+    <server>
+      <id>jfrog-snapshots</id>
+      <username>${env.BINTRAY_USER}</username>
+      <password>${env.BINTRAY_KEY}</password>
+    </server>
+    <server>
+      <id>github.com</id>
+      <username>${env.GH_USER}</username>
+      <password>${env.GH_TOKEN}</password>
     </server>
   </servers>
 </settings>
-
