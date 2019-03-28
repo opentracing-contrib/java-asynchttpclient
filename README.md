@@ -1,11 +1,11 @@
-# java-asynchttpclient
-[![Build Status](https://travis-ci.org/opentracing-contrib/java-asynchttpclient.svg?branch=master)](https://travis-ci.org/opentracing-contrib/java-asynchttpclient)
+[![Build Status][ci-img]][ci] [![Coverage Status][cov-img]][cov] [![Released Version][maven-img]][maven] [![Apache-2.0 license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 OpenTracing Instrumentation for org.asynchttpclient
 
 ## Requirements
 
 - [AsyncHttpClient](https://github.com/AsyncHttpClient/async-http-client) >= 2.0.0
-- [OpenTracing Java](https://github.com/opentracing/opentracing-java) >= 0.16.0
+- [OpenTracing Java](https://github.com/opentracing/opentracing-java) = 0.32.0
 
 ## Installation
 
@@ -14,48 +14,32 @@ Releases are hosted on Maven Central.
 pom.xml
 ```xml
 <dependency>
-    <groupId>io.opentracing.contrib.asynchttpclient</groupId>
+    <groupId>io.opentracing.contrib</groupId>
     <artifactId>asynchttpclient-opentracing</artifactId>
-    <version>0.1.0</version>
+    <version>VERSION</version>
 </dependency>
-```
-
-build.gradle
-```groovy
-dependencies {
-    compile 'io.opentracing.contrib.asynchttpclient:asynchtpclient-opentracing:0.1.0'
-}
 ```
 
 ## Usage
 
-- Intialize an OpenTracing tracer
-- Create an `ActiveSpanSource` to return a parent span when a span is created for a request.
-- Create a `SpanDecorator` or use the `DEFAULT` implementation.
-- Create a `TracingAsyncHttpClient` and use it to make requests.
-
 ```java
-class MyClass {
-    final ThreadLocal<Span> activeSpan;
+// Instantiate tracer
+Tracer tracer = ...
 
-    public MyClass() {
-        activeSpan = new ThreadLocal<Span>() {};
 
-        // Source that can extract span data and keep it in a thread-local:
-        TracingAsyncHttpClient.ActiveSpanSource activeSpanSource = 
-            new TracingAsyncHttpClient.ActiveSpanSource() {
-                public Span getActiveSpan() {
-                    return activeSpan.get();
-                }
-            };
+// Build TracingAsyncHttpClient
+AsyncHttpClient client = new TracingAsyncHttpClient(tracer);
 
-        Tracer tracer = ... // Any OpenTracing-compatible tracer.
-
-        AsyncHttpClient client = new TracingAsyncHttpClient(
-                    tracer,
-                    activeSpanSource,
-                    SpanDecorator.DEFAULT
-                );
-    }
-}
 ```
+
+## License
+
+[Apache 2.0 License](./LICENSE).
+
+[ci-img]: https://travis-ci.org/opentracing-contrib/java-asynchttpclient.svg?branch=master
+[ci]: https://travis-ci.org/opentracing-contrib/java-asynchttpclient
+[cov-img]: https://coveralls.io/repos/github/opentracing-contrib/java-asynchttpclient/badge.svg?branch=master
+[cov]: https://coveralls.io/github/opentracing-contrib/java-asynchttpclient?branch=master
+[maven-img]: https://img.shields.io/maven-central/v/io.opentracing.contrib/opentracing-asynchttpclient.svg
+[maven]: http://search.maven.org/#search%7Cga%7C1%7Copentracing-asynchttpclient
+
