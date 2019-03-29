@@ -15,7 +15,7 @@ pom.xml
 ```xml
 <dependency>
     <groupId>io.opentracing.contrib</groupId>
-    <artifactId>asynchttpclient-opentracing</artifactId>
+    <artifactId>opentracing-asynchttpclient</artifactId>
     <version>VERSION</version>
 </dependency>
 ```
