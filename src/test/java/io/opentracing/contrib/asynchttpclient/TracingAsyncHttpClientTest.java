@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import io.opentracing.Scope;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.tag.Tags;
@@ -66,6 +67,52 @@ public class TracingAsyncHttpClientTest {
     assertEquals(1, spans.size());
 
     checkSpans(spans);
+
+    assertNull(tracer.activeSpan());
+  }
+
+  @Test
+  public void testNoActiveSpan() throws Exception {
+    stubFor(get(urlPathMatching("/.*"))
+        .willReturn(aResponse()
+            .withStatus(200)
+            .withBody("no-span")));
+
+    AsyncHttpClient client = new TracingAsyncHttpClient(tracer, true);
+
+    Request request = new RequestBuilder(HttpConstants.Methods.GET)
+        .setUrl("http://localhost:8888")
+        .build();
+
+    final Response response = client.executeRequest(request).get(10, TimeUnit.SECONDS);
+    assertEquals("no-span", response.getResponseBody());
+
+    List<MockSpan> spans = tracer.finishedSpans();
+    assertEquals(0, spans.size());
+
+    assertNull(tracer.activeSpan());
+  }
+
+  @Test
+  public void testWithActiveSpan() throws Exception {
+    stubFor(get(urlPathMatching("/.*"))
+        .willReturn(aResponse()
+            .withStatus(200)
+            .withBody("active-span")));
+
+    AsyncHttpClient client = new TracingAsyncHttpClient(tracer, true);
+
+    Request request = new RequestBuilder(HttpConstants.Methods.GET)
+        .setUrl("http://localhost:8888")
+        .build();
+
+    try (final Scope ignored = tracer.buildSpan("parent").startActive(true)) {
+      final Response response = client.executeRequest(request).get(10, TimeUnit.SECONDS);
+      assertEquals("active-span", response.getResponseBody());
+    }
+
+    List<MockSpan> spans = tracer.finishedSpans();
+    assertEquals(2, spans.size());
 
     assertNull(tracer.activeSpan());
   }

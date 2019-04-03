@@ -30,6 +30,11 @@ Tracer tracer = ...
 // Build TracingAsyncHttpClient
 AsyncHttpClient client = new TracingAsyncHttpClient(tracer);
 
+// By default spans are always created
+// To trace only if there is an active span
+// Build TracingAsyncHttpClient with optional parameter set to true
+AsyncHttpClient client = new TracingAsyncHttpClient(tracer, true);
+
 ```
 
 ## License
