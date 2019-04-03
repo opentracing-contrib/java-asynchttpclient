@@ -32,7 +32,7 @@ import org.asynchttpclient.Request;
 @SuppressWarnings("unused")
 public class TracingAsyncHttpClient extends DefaultAsyncHttpClient {
 
-  private Tracer tracer;
+  private final Tracer tracer;
   private final List<SpanDecorator> decorators;
   private final boolean traceWithActiveSpanOnly;
 
