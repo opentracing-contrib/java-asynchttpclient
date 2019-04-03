@@ -34,29 +34,54 @@ public class TracingAsyncHttpClient extends DefaultAsyncHttpClient {
 
   private Tracer tracer;
   private final List<SpanDecorator> decorators;
+  private final boolean traceWithActiveSpanOnly;
 
   public TracingAsyncHttpClient(Tracer tracer) {
-    this(tracer, Collections.singletonList(SpanDecorator.DEFAULT));
+    this(tracer, Collections.singletonList(SpanDecorator.DEFAULT), false);
+  }
+
+  public TracingAsyncHttpClient(Tracer tracer, boolean traceWithActiveSpanOnly) {
+    this(tracer, Collections.singletonList(SpanDecorator.DEFAULT), traceWithActiveSpanOnly);
   }
 
   public TracingAsyncHttpClient(Tracer tracer, List<SpanDecorator> decorators) {
+    this(tracer, decorators, false);
+  }
+
+  public TracingAsyncHttpClient(Tracer tracer, List<SpanDecorator> decorators,
+      boolean traceWithActiveSpanOnly) {
     this.tracer = tracer;
     this.decorators = new ArrayList<>(decorators);
+    this.traceWithActiveSpanOnly = traceWithActiveSpanOnly;
   }
 
   public TracingAsyncHttpClient(AsyncHttpClientConfig config, Tracer tracer) {
-    this(config, tracer, Collections.singletonList(SpanDecorator.DEFAULT));
+    this(config, tracer, Collections.singletonList(SpanDecorator.DEFAULT), false);
+  }
+
+  public TracingAsyncHttpClient(AsyncHttpClientConfig config, Tracer tracer,
+      boolean traceWithActiveSpanOnly) {
+    this(config, tracer, Collections.singletonList(SpanDecorator.DEFAULT), traceWithActiveSpanOnly);
   }
 
   public TracingAsyncHttpClient(AsyncHttpClientConfig config, Tracer tracer,
       List<SpanDecorator> decorators) {
+    this(config, tracer, decorators, false);
+  }
+
+  public TracingAsyncHttpClient(AsyncHttpClientConfig config, Tracer tracer,
+      List<SpanDecorator> decorators, boolean traceWithActiveSpanOnly) {
     super(config);
     this.tracer = tracer;
     this.decorators = new ArrayList<>(decorators);
+    this.traceWithActiveSpanOnly = traceWithActiveSpanOnly;
   }
 
   @Override
   public <T> ListenableFuture<T> executeRequest(Request request, AsyncHandler<T> handler) {
+    if (traceWithActiveSpanOnly && tracer.activeSpan() == null) {
+      return super.executeRequest(request, handler);
+    }
 
     final Span span = tracer
         .buildSpan(request.getMethod())
