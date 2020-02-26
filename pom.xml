@@ -69,7 +69,7 @@
     <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
 
-    <asynchttpclient.version>2.10.1</asynchttpclient.version>
+    <asynchttpclient.version>2.10.5</asynchttpclient.version>
   </properties>
 
   <dependencies>
